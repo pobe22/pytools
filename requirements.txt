@@ -1,7 +1,7 @@
 streamlit>=1.25
 requests>=2.32
 beautifulsoup4>=4.12
-scikit-learn>=1.4.0,<1.6
+scikit-learn>=1.4,<1.6
 fpdf2>=2.7
 PyPDF2>=3.1
 yt-dlp>=2025.11

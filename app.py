@@ -66,11 +66,23 @@ def run_pdf_word_tools(uploaded_files, output_pdf):
     shutil.rmtree(temp_dir)
     return output_pdf
 
+# --- Video Converter ---
+from tools.video_converter import avi_to_mp4
+
+def run_video_converter(uploaded_file):
+    temp_input = os.path.join(tempfile.gettempdir(), uploaded_file.name)
+    with open(temp_input, "wb") as f:
+        f.write(uploaded_file.getbuffer())
+
+    output_file = os.path.splitext(temp_input)[0] + ".mp4"
+    avi_to_mp4(temp_input, output_file)
+    return output_file
+
 
 # --- Streamlit Interface ---
 st.title("📦 Python Tools Dashboard")
 
-menu = ["SEO Analyse", "SoundCloud Downloader", "PDF/Word Tools"]
+menu = ["SEO Analyse", "SoundCloud Downloader", "PDF/Word Tools", "AVI → MP4 Converter"]
 choice = st.sidebar.selectbox("Wähle ein Tool", menu)
 
 if choice == "SEO Analyse":
@@ -100,3 +112,19 @@ elif choice == "PDF/Word Tools":
                 output_pdf = run_pdf_word_tools(uploaded_files, output_name)
             st.success("PDF erstellt!")
             st.download_button("Download PDF", data=open(output_pdf, "rb"), file_name=os.path.basename(output_pdf))
+
+elif choice == "AVI → MP4 Converter":
+    st.header("🎬 AVI zu MP4 Video Converter")
+
+    uploaded_file = st.file_uploader("Wähle eine AVI-Datei aus", type=["avi"])
+    if uploaded_file:
+        if st.button("Konvertieren"):
+            with st.spinner("Video wird konvertiert..."):
+                output_path = run_video_converter(uploaded_file)
+            st.success("Konvertierung abgeschlossen!")
+            st.download_button(
+                "Download MP4",
+                data=open(output_path, "rb"),
+                file_name=os.path.basename(output_path)
+            )
+

@@ -46,6 +46,25 @@ The PDF Converter is a tool to create, merge, and manipulate PDF files programma
 3. Configure output options (filename, directory, metadata).
 4. The program will generate the PDF or merged PDF file.
 
+
+## AVI to MP4 Converter
+
+The AVI to MP4 Converter is a lightweight and efficient tool that converts .avi video files into .mp4 format using the moviepy library.
+It ensures compatibility with most modern devices and streaming platforms by encoding videos with the libx264 codec and audio with AAC.
+
+### Features
+- Converts .avi files to .mp4 with high quality.
+- Uses moviepy for fast and reliable video processing.
+- Retains audio tracks and syncs them automatically.
+- Ensures compatibility with browsers and mobile devices.
+- Simple Streamlit interface for drag-and-drop conversion.
+
+### Usage
+- Launch the Streamlit app.
+- Select “AVI → MP4 Converter” from the sidebar.
+- Upload an .avi video file.
+- Click Convert to start processing.
+- Download the converted .mp4 file when the conversion is complete.
 ---
 
 ## Requirements
@@ -58,3 +77,4 @@ scikit-learn>=1.4,<1.6
 fpdf2>=2.7
 PyPDF2>=3.0,<3.1
 yt-dlp>=2025.10.31.222828.dev0
+moviepy>=1.0.3

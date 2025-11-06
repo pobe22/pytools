@@ -55,10 +55,12 @@ class PDF(FPDF):
             'C'
         )
 
+
 # --- Funktionen ---
 def fetch_page(url):
     response = requests.get(url)
     return BeautifulSoup(response.text, 'html.parser')
+
 
 def clean_text(text):
     """Ersetzt Sonderzeichen durch ASCII-äquivalente."""

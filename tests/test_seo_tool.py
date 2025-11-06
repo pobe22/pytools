@@ -1,10 +1,10 @@
 import sys
 import os
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))  # noqa: E402
 
-import unittest
-from tools.seo_tool import (
+import unittest  # noqa: E402
+from tools.seo_tool import (  # noqa: E402
     fetch_page,
     PDF,
     analyze_meta_tags,

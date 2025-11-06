@@ -1,6 +1,7 @@
 import yt_dlp
 import os
 
+
 def download_playlist(playlist_url, output_dir, ffmpeg_path=None):
     if ffmpeg_path is None:
         ffmpeg_path = "ffmpeg"  # default für Linux/Windows im PATH

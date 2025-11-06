@@ -3,13 +3,26 @@ import os
 import tempfile
 import shutil
 from datetime import datetime
-from tools.seo_tool import *
+from tools.seo_tool import (
+    fetch_page,
+    PDF,
+    analyze_meta_tags,
+    analyze_headings,
+    analyze_images,
+    analyze_links,
+    analyze_load_time,
+    analyze_structured_data,
+    analyze_viewport,
+    analyze_tfidf
+)
 from tools.soundcloud_downloader import download_playlist
 from tools.pdf_tools import convert_and_merge_word_to_pdf
 from tools.video_converter import avi_to_mp4
 
 
 # --- Funktionen ---
+
+
 def run_seo_analysis(url):
     soup = fetch_page(url)
     pdf = PDF()
@@ -30,7 +43,10 @@ def run_seo_analysis(url):
         pdf.add_chapter(f"{title} Analysis", data)
 
     tfidf_analysis = analyze_tfidf(soup)
-    pdf.add_chapter("TF-IDF Analysis", [f"{word}: {score:.2%}" for word, score in tfidf_analysis])
+    pdf.add_chapter(
+        "TF-IDF Analysis",
+        [f"{word}: {score:.2%}" for word, score in tfidf_analysis]
+    )
     pdf.add_page()
     pdf.chapter_title("Top 10 Most Used Words (TF-IDF)")
     pdf.add_tfidf_table(tfidf_analysis)
@@ -71,12 +87,30 @@ def run_video_converter(uploaded_file):
 
 
 # --- Streamlit Layout ---
-st.set_page_config(page_title="PyTools Dashboard", page_icon="🧰", layout="wide")
-st.markdown("<h1 style='text-align:center;'>🧰 PyTools Dashboard</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; color:gray;'>All-in-one toolkit for SEO, media & document automation</p>", unsafe_allow_html=True)
+
+
+st.set_page_config(
+    page_title="PyTools Dashboard", page_icon="🧰", layout="wide"
+)
+st.markdown(
+    "<h1 style='text-align:center;'>🧰 PyTools Dashboard</h1>",
+    unsafe_allow_html=True
+)
+st.markdown(
+    "<p style='text-align:center; color:gray;'>"
+    "All-in-one toolkit for SEO, media & document automation</p>",
+    unsafe_allow_html=True
+)
 st.divider()
 
-tabs = st.tabs(["🔍 SEO Analyzer", "🎵 SoundCloud Downloader", "📄 PDF/Word Tools", "🎬 Video Converter"])
+tabs = st.tabs(
+    [
+        "🔍 SEO Analyzer",
+        "🎵 SoundCloud Downloader",
+        "📄 PDF/Word Tools",
+        "🎬 Video Converter",
+    ]
+)
 
 # --- SEO Tab ---
 with tabs[0]:
@@ -88,7 +122,12 @@ with tabs[0]:
             with st.spinner("Analyzing website..."):
                 pdf_path = run_seo_analysis(url)
             st.success("✅ Analysis complete!")
-            st.download_button("📥 Download PDF Report", data=open(pdf_path, "rb"), file_name=os.path.basename(pdf_path))
+            with open(pdf_path, "rb") as f:
+                st.download_button(
+                    "📥 Download PDF Report",
+                    data=f,
+                    file_name=os.path.basename(pdf_path)
+                )
 
 # --- SoundCloud Downloader ---
 with tabs[1]:
@@ -100,20 +139,29 @@ with tabs[1]:
         if sc_url and output_dir:
             with st.spinner("Downloading playlist..."):
                 run_soundcloud_downloader(sc_url, output_dir)
-            st.success(f"✅ Download finished! Files saved to {output_dir}")
+            st.success(
+                f"✅ Download finished!\nFiles saved to {output_dir}"
+            )
 
 # --- PDF/Word Tools ---
 with tabs[2]:
     st.header("📄 PDF & Word Tools")
     st.info("Upload Word or PDF files to convert and merge them into one PDF.")
-    uploaded_files = st.file_uploader("Upload files:", type=["docx", "pdf"], accept_multiple_files=True)
+    uploaded_files = st.file_uploader(
+        "Upload files:", type=["docx", "pdf"], accept_multiple_files=True
+    )
     output_name = st.text_input("Output PDF name:", value="merged_document.pdf")
     if st.button("Convert & Merge"):
         if uploaded_files:
             with st.spinner("Processing..."):
                 output_pdf = run_pdf_word_tools(uploaded_files, output_name)
             st.success("✅ PDF created!")
-            st.download_button("📥 Download PDF", data=open(output_pdf, "rb"), file_name=os.path.basename(output_pdf))
+            with open(output_pdf, "rb") as f:
+                st.download_button(
+                    "📥 Download PDF",
+                    data=f,
+                    file_name=os.path.basename(output_pdf)
+                )
 
 # --- Video Converter ---
 with tabs[3]:
@@ -124,4 +172,9 @@ with tabs[3]:
         with st.spinner("Converting video..."):
             output_path = run_video_converter(uploaded_file)
         st.success("✅ Conversion complete!")
-        st.download_button("📥 Download MP4", data=open(output_path, "rb"), file_name=os.path.basename(output_path))
+        with open(output_path, "rb") as f:
+            st.download_button(
+                "📥 Download MP4",
+                data=f,
+                file_name=os.path.basename(output_path)
+            )

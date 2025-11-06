@@ -3,6 +3,7 @@ import subprocess
 from PyPDF2 import PdfMerger
 import platform
 
+
 def merge_pdfs(pdf_files, output_path):
     merger = PdfMerger()
     for pdf in pdf_files:
@@ -13,6 +14,7 @@ def merge_pdfs(pdf_files, output_path):
     merger.write(output_path)
     merger.close()
     print(f"Zusammengeführte PDF gespeichert: {output_path}")
+
 
 def word_to_pdf(input_path, output_path):
     system = platform.system()
@@ -32,6 +34,7 @@ def word_to_pdf(input_path, output_path):
                         "--outdir", os.path.dirname(output_path), input_path],
                        check=True)
 
+
 def convert_and_merge_word_to_pdf(word_files, output_pdf):
     temp_pdf_files = []
     for word_file in word_files:
@@ -44,6 +47,7 @@ def convert_and_merge_word_to_pdf(word_files, output_pdf):
         temp_pdf = os.path.splitext(word_file)[0] + "_temp.pdf"
         word_to_pdf(word_file, temp_pdf)
         temp_pdf_files.append(temp_pdf)
+
 
     if temp_pdf_files:
         merge_pdfs(temp_pdf_files, output_pdf)

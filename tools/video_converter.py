@@ -1,6 +1,7 @@
 import moviepy as mp
 import os
 
+
 def avi_to_mp4(input_path: str, output_path: str):
     """
     Converts an AVI video file to MP4 format using moviepy.

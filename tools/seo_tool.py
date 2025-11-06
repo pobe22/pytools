@@ -4,9 +4,10 @@ import time
 from sklearn.feature_extraction.text import TfidfVectorizer
 from fpdf import FPDF
 from datetime import datetime
+import os
+
 
 class PDF(FPDF):
-    
     def header(self):
         self.set_font('Helvetica', 'B', 12)
         self.cell(0, 10, 'SEO Analysis Report', 0, align='C')
@@ -21,10 +22,10 @@ class PDF(FPDF):
         self.set_font('Helvetica', '', 12)
         if isinstance(body, list):
             for line in body:
-                self.multi_cell(0, 10, line, align='L')
+                self.multi_cell(0, 10, clean_text(line), align='L')
                 self.ln(5)
         else:
-            self.multi_cell(0, 10, body, align='L')
+            self.multi_cell(0, 10, clean_text(body), align='L')
             self.ln(5)
         self.ln()
 
@@ -40,18 +41,49 @@ class PDF(FPDF):
         for word, score in top_words:
             self.cell(col_width, row_height, word, border=1)
             self.cell(col_width, row_height, f'{score:.2%}', border=1, ln=True)
-            
+
     def cover_page(self):
         self.add_page()
         self.set_font('Helvetica', 'B', 24)
         self.cell(0, 60, 'SEO Analysis Report', 0, 1, 'C')
         self.set_font('Helvetica', 'I', 12)
-        self.cell(0, 10, 'Generated on ' + datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 0, 1, 'C')
+        self.cell(
+            0,
+            10,
+            'Generated on ' + datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            0,
+            1,
+            'C'
+        )
 
-
+# --- Funktionen ---
 def fetch_page(url):
     response = requests.get(url)
     return BeautifulSoup(response.text, 'html.parser')
+
+
+def clean_text(text):
+    """Ersetzt Sonderzeichen durch ASCII-äquivalente."""
+    if not text:
+        return ""
+    replacements = {
+        "–": "-",  
+        "—": "-",  
+        "“": '"',
+        "”": '"',
+        "‘": "'",
+        "’": "'",
+        "…": "...",
+        "é": "e",
+        "ä": "ae",
+        "ö": "oe",
+        "ü": "ue",
+        "ß": "ss",
+    }
+    for orig, repl in replacements.items():
+        text = text.replace(orig, repl)
+    return text
+
 
 def analyze_meta_tags(soup):
     results = ""
@@ -59,13 +91,16 @@ def analyze_meta_tags(soup):
     results += f'Title: {title}\n'
 
     meta_description = soup.find('meta', attrs={'name': 'description'})
-    meta_description_content = meta_description['content'] if meta_description else 'No meta description found'
+    meta_description_content = (
+        meta_description['content'] if meta_description else 'No meta description found'
+    )
     results += f'Meta Description: {meta_description_content}\n'
 
     meta_keywords = soup.find('meta', attrs={'name': 'keywords'})
     meta_keywords_content = meta_keywords['content'] if meta_keywords else 'No meta keywords found'
     results += f'Meta Keywords: {meta_keywords_content}\n'
     return results
+
 
 def analyze_headings(soup):
     results = ""
@@ -75,6 +110,7 @@ def analyze_headings(soup):
             results += f'H{i}: {header.get_text(strip=True)}\n'
     return results
 
+
 def analyze_images(soup):
     results = ""
     images = soup.find_all('img')
@@ -83,6 +119,7 @@ def analyze_images(soup):
         src = img.get('src')
         results += f'Image: {src}, Alt Text: {alt_text if alt_text else "No alt text"}\n'
     return results
+
 
 def analyze_links(soup):
     results = ""
@@ -99,12 +136,13 @@ def analyze_links(soup):
     results += f'External Links: {external_links}\n'
     return results
 
+
 def analyze_load_time(url):
     start_time = time.time()
-    response = requests.get(url)
     end_time = time.time()
     load_time = end_time - start_time
     return f'Page Load Time: {load_time:.2f} seconds\n'
+
 
 def analyze_tfidf(soup):
     text_content = soup.get_text()
@@ -116,12 +154,14 @@ def analyze_tfidf(soup):
     word_scores.sort(key=lambda x: x[1], reverse=True)
     return word_scores[:10]
 
+
 def analyze_structured_data(soup):
     results = ""
     structured_data = soup.find_all('script', attrs={'type': 'application/ld+json'})
     for data in structured_data:
         results += f'Structured Data: {data.get_text(strip=True)}\n'
     return results
+
 
 def analyze_viewport(soup):
     viewport = soup.find('meta', attrs={'name': 'viewport'})

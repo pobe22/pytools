@@ -1,4 +1,5 @@
 # Pytools
+![Tests](https://github.com/pobe22/pytools/actions/workflows/test-and-lint.yml/badge.svg)
 
 ## SEO Optimizer
 

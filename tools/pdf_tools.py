@@ -48,7 +48,6 @@ def convert_and_merge_word_to_pdf(word_files, output_pdf):
         word_to_pdf(word_file, temp_pdf)
         temp_pdf_files.append(temp_pdf)
 
-
     if temp_pdf_files:
         merge_pdfs(temp_pdf_files, output_pdf)
         # temporäre Dateien löschen

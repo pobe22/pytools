@@ -4,7 +4,6 @@ import time
 from sklearn.feature_extraction.text import TfidfVectorizer
 from fpdf import FPDF
 from datetime import datetime
-import os
 
 
 class PDF(FPDF):
@@ -61,14 +60,13 @@ def fetch_page(url):
     response = requests.get(url)
     return BeautifulSoup(response.text, 'html.parser')
 
-
 def clean_text(text):
     """Ersetzt Sonderzeichen durch ASCII-äquivalente."""
     if not text:
         return ""
     replacements = {
-        "–": "-",  
-        "—": "-",  
+        "–": "-",
+        "—": "-",
         "“": '"',
         "”": '"',
         "‘": "'",

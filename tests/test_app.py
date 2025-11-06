@@ -1,10 +1,5 @@
 import os
-import tempfile
 import pytest
-from tools.seo_tool import fetch_page, PDF
-from tools.soundcloud_downloader import download_playlist
-from tools.pdf_tools import convert_and_merge_word_to_pdf
-from tools.video_converter import avi_to_mp4
 from app import (
     run_seo_analysis,
     run_soundcloud_downloader,
